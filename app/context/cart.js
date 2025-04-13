@@ -56,7 +56,7 @@ const Provider = ({ children }) => {
 
     const cartCount = () =>{
         let cart = []
-        if( typeof localStorage !=="undefined)"){
+        if( typeof localStorage !=="undefined" ){
             cart = JSON.parse(localStorage.getItem("cart")) || []
         }
         return cart.length
