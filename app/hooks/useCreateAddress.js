@@ -12,6 +12,7 @@ const useCreateAddress = async (details) => {
             address: details.address,
             zipcode: details.zipcode,
             city: details.city,
+            state: details.state,
             country: details.country,
         })
     })

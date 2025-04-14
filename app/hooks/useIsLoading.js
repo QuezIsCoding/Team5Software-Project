@@ -3,4 +3,4 @@ const useIsLoading = (bool) => {
     window.dispatchEvent(new Event("storage"));
 }
 
-export default useIsLoading;
+export default useIsLoading

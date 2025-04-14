@@ -6,8 +6,9 @@ import { cookies } from "next/headers";
 
 //Create API end points
 export async function POST(req){
-    const supabase = createServerComponentClient({ cookies });
-    
+    const cookieStore = await cookies();
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
+        
     try {
         const{ data: {user} }= await supabase.auth.getUser()
 
@@ -21,7 +22,8 @@ export async function POST(req){
                     name: body.name,
                     address: body.address,
                     city: body.city,
-                    zipcode: body.zipcode,
+                    state:body.state,
+                    zip: body.zipcode,
                     country: body.country,
                 }
             })

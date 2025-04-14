@@ -1,5 +1,6 @@
 "use client"
-
+//This is the carousel component for the main page
+//Here you can add pictures/banners to the rotating carousel
 import {Carousel} from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 

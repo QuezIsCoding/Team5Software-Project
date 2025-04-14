@@ -6,10 +6,12 @@ import {useUser} from "../context/user"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import useIsLoading from "../hooks/useIsloading"
-import useUserAddress from "../hooks/useUserAddress"
+import useIsLoading from "../hooks/useIsLoading"
 import { toast } from "react-toastify"
+import useUserAddress from "../hooks/useUserAddress"
 import useCreateAddress from "../hooks/useCreateAddress"
+import ClientOnly from "../components/ClientOnly"
+
 
 export default function Address() {
     const router = useRouter()
@@ -19,6 +21,7 @@ export default function Address() {
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
     const [zipcode, setZipcode] = useState('')
+    const [state, setState] = useState('')
     const [city, setCity] = useState('')
     const [country, setCountry] = useState('')
     const [isUpdatingAddress, setIsUpdatingAddress] = useState(false)
@@ -36,7 +39,7 @@ export default function Address() {
             useIsLoading(false)
             return
         }
-
+        
         const response = await useUserAddress()
         if(response){
             setTheCurrentAddres(response)
@@ -50,12 +53,13 @@ export default function Address() {
         useIsLoading(true)
         getAddress()
     }, [user])
-
+    
     const setTheCurrentAddres = (result) =>{
-        setAddressId(result)
+        setAddressId(result.id)
         setName(result.name)
         setAddress(result.address)
         setZipcode(result.zipcode)
+        setState(result.state)
         setCity(result.city)
         setCountry(result.country)
     }
@@ -73,7 +77,10 @@ export default function Address() {
         } else if (!zipcode) {
             setError({ type: 'zipcode', message: 'A zipcode is required'})
             isError = true
-        } else if (!city) {
+        }else if (!state) {
+            setError({ type: 'state', message: 'A state is required' })
+            isError = true
+        }else if (!city) {
             setError({ type: 'city', message: 'A city is required'})
             isError = true
         } else if (!country) {
@@ -84,7 +91,7 @@ export default function Address() {
 
     }
 
-    const submit = async(event) =>{
+    const submit = async(event)=>{
         event.preventDefault();
         let isError = validate()
 
@@ -97,25 +104,26 @@ export default function Address() {
             setIsUpdatingAddress(true)
 
             const response = await useCreateAddress({
-                addressId,
-                name,
-                address,
-                zipcode,
+                addressId, 
+                name, 
+                address, 
+                zipcode, 
                 city,
-                country
+                state, 
+                country  
             })
 
             setTheCurrentAddres(response)
             setIsUpdatingAddress(false)
 
-            toast.success('Address has been updated!', {autoClose: 3000})
-
+            toast.success('Address updated!', {autoClose:3000})
             router.push('/checkout')
         } catch (error) {
             setIsUpdatingAddress(false)
             console.log(error)
             alert(error)
         }
+        
     }
 
 
@@ -130,17 +138,83 @@ export default function Address() {
 
                         <div className="text-xl text-bold mb-2">Address Details</div>
 
-                        <form>
+                        <form onSubmit={submit}>
                             <div className="mb-4">
+                                <ClientOnly>
                                 <TextInput
                                     className="w-full"
-                                    string={'TEST'}
+                                    string={name}
                                     placeholder="Name"
-                                    error="This is an error message"
+                                    onUpdate={setName}
+                                    error={showError('name')}
                                 />
+                                </ClientOnly>
                             </div>
+
+                            <div className="mb-4">
+                                <ClientOnly>
+                                <TextInput
+                                    className="w-full"
+                                    string={address}
+                                    placeholder="Address"
+                                    onUpdate={setAddress}
+                                    error={showError('address')}
+                                />
+                                </ClientOnly>
+                            </div>
+
+                            <div className="mb-4">
+                                <ClientOnly>
+                                <TextInput
+                                    className="w-full"
+                                    string={zipcode}
+                                    placeholder="Zip Code"
+                                    onUpdate={setZipcode}
+                                    error={showError('zipcode')}
+                                />
+                                </ClientOnly>
+                            </div>
+
+                            <div className="mb-4">
+                                <ClientOnly>
+                                <TextInput
+                                    className="w-full"
+                                    string={city}
+                                    placeholder="City"
+                                    onUpdate={setCity}
+                                    error={showError('City')}
+                                />
+                                </ClientOnly>
+                            </div>
+
+                            <div className="mb-4">
+                                <ClientOnly>
+                                <TextInput
+                                    className="w-full"
+                                    string={state}
+                                    placeholder="State"
+                                    onUpdate={setState}
+                                    error={showError('state')}
+                                />
+                                </ClientOnly>
+                            </div>
+
+                            <div className="mb-4">
+                                <ClientOnly>
+                                <TextInput
+                                    className="w-full"
+                                    string={country}
+                                    placeholder="Country"
+                                    onUpdate={setCountry}
+                                    error={showError('country')}
+                                />
+                                </ClientOnly>
+                            </div>
+
                             <button
-                                className="
+                                type="submit"
+                                disabled ={isUpdatingAddress}
+                                className={`
                                 mt-6
                                 w-full
                                 text-white
@@ -148,9 +222,16 @@ export default function Address() {
                                 p-3
                                 rounded
                                 bg-blue-600
-                            "
+                                ${isUpdatingAddress ? 'bg-blue-800' : 'bg-blue-600'}
+                                `}
                             >
-                                Update Address
+                                {!isUpdatingAddress
+                                    ?<div>Update Address</div>
+                                    :<div className="flex items-center justify-center gap-2">
+                                        <AiOutlineLoading3Quarters className="animate-spin" />
+                                        Please wait..
+                                    </div>
+                                }
                             </button>
 
                 
