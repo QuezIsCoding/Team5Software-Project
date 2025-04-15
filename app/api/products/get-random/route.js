@@ -1,7 +1,5 @@
 import prisma from "@/app/libs/Prisma";
 import { NextResponse } from "next/server";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-
 
 //Create API end points
 export async function GET(){
@@ -15,7 +13,7 @@ export async function GET(){
             orderBy:{ id: 'asc'},
         })
             await prisma.$disconnect();
-            return NextResponse.json(items);
+            return NextResponse.json(products);
     }catch (error){
         console.log(error);
         await prisma.$disconnect();

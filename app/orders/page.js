@@ -3,28 +3,34 @@
 import Link from "next/link";
 import { CiDeliveryTruck } from "react-icons/ci";
 import MainLayout from "../layouts/MainLayout";
+import { useUser } from "../context/user";
+import { useEffect, useState } from "react";
+import useIsLoading from "../hooks/useIsLoading";
+import { toast } from "react-toastify";
+import moment from "moment";
 
 export default function Orders() {
-    const orders = [
-        {
-            id: 1,
-            stripe_id: 12341234,
-            name: "Test",
-            address: "Test",
-            zipcode: "Test",
-            city: "Test",
-            state: "Test",
-            country: "Test",
-            total: 1999,
-            orderItem: [
-                {
-                    id: 1,
-                    title: 'Brown Leather Bag',
-                    url: 'https://picsum.photos/id/7', 
-                }
-            ]
+
+    const {user} = useUser()
+    const [orders, setOrders] =useState([])
+
+    const getOrders = async () => {
+        try {
+            if(!user && !user?.id) return
+            const response = await fetch("/api/orders")
+            const result = await response.json()
+            setOrders(result)
+            useIsLoading(false)
+        } catch (error) {
+            toast.error('Something went wrong?', {autoClose:3000})
+            useIsLoading(false)            
         }
-    ];
+    }
+
+    useEffect(() =>{
+        useIsLoading(true)
+        getOrders()
+    }, [user])
 
     return (
         <MainLayout>
@@ -58,12 +64,25 @@ export default function Orders() {
                                     ${order.total / 100} USD
                                 </div>
 
+                                <div className="pt-2">
+                                    <span className="font-bold mr-2">Order Created:</span>
+                                    {moment(order?.created_at).calendar()}
+                                </div>
+
+                                <div className="pt-2">
+                                    <span className="font-bold mr-2">Delivery Time:</span>
+                                    {moment(order?.created_at).add(3,'days').calendar()}
+                                </div>
+
                                 <div className=" flex items-center gap-4">
                                     {order?.orderItem.map(item => (
                                         <div key={item.id} className="flex items-center">
-                                            <Link href="/" className="py-1 hover:underline text-blue-500 font-bold">
-                                                <img className="rounded" width="120" src={item.url+'/120'} />
-                                                {item.title}
+                                            <Link 
+                                                className="py-1 hover:underline text-blue-500 font-bold"
+                                                href={`/product/${item.product_id}`}
+                                            >
+                                                <img className="rounded" width="120" src={item.product.url+'/120'} />
+                                                {item.product.title}
                                             </Link>
                                         </div>
                                     ))}

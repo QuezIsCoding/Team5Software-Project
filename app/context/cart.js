@@ -11,12 +11,17 @@ const Provider = ({ children }) => {
     const [isItemAdded, setIsItemAdded] = useState(false)
 
     const getCart = () => {
-        let cart = []
-        if( typeof localStorage !=="undefined)"){
-            cart = JSON.parse(localStorage.getItem("cart")) || []
+        if (typeof window === "undefined") return []; 
+    
+        try {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            return cart;
+        } catch (e) {
+            console.error("Error parsing cart from localStorage:", e);
+            return [];
         }
-        return cart
-    }
+    };
+    
 
     const addToCart = (product) => {
         let cart = []
@@ -62,19 +67,23 @@ const Provider = ({ children }) => {
         return cart.length
     }
 
-    const cartTotal = () =>{
-       let total = 0
-       let cart = []
-       if( typeof localStorage !=="undefined)"){
-            cart = JSON.parse(localStorage.getItem("cart")) || []
+    const cartTotal = () => {
+        let total = 0;
+        let cart = [];
+        if (typeof window !== "undefined") {
+            try {
+                cart = JSON.parse(localStorage.getItem("cart")) || [];
+            } catch (e) {
+                console.error("Error reading cart from localStorage:", e);
+            }
         }
-       for (let i = 0; i <cart.length; i++){
+        for (let i = 0; i < cart.length; i++) {
             const element = cart[i];
-            total += element.price
-       }
-       return total
+            total += element.price;
+        }
+        return total;
     }
-
+    
     const clearCart= () => {
         localStorage.removeItem('cart')
         router.refresh()

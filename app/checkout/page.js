@@ -1,16 +1,68 @@
 "use client"
 
+import { useUser } from "../context/user"
 import CheckoutItem from "../components/CheckoutItem"
 import MainLayout from "../layouts/MainLayout"
+import { useCart } from "../context/cart"
+import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
+import useIsLoading from "../hooks/useIsLoading"
+import useUserAddress from "../hooks/useUserAddress"
+import { loadStripe } from "@stripe/stripe-js"
 
 export default function Checkout() {
-    const product = {
-        id: 1,
-        title: 'Brown Leather Bag',
-        description: 'This is where user describes the product',
-        url: 'https://picsum.photos/id/7',
-        price: 1999,
-    }  
+
+    const user = useUser();
+    const cart = useCart();
+    const router = useRouter()
+
+    let stripe = useRef(null)
+    let elements = useRef(null)
+    let card = useRef(null)
+    let clientSecret = useRef(null)
+
+    const [addressDetails, setAddressDetails] = useState({})
+    const [isLoadingAddress, setIsLoadingAddress] = useState(false)
+
+    useEffect(() => {
+        if(cart.cartTotal() <=0){
+            toast.error("Your cart is empty! Add items to continue", {autoClose:3000})
+            return router.push('/')
+        }
+
+        useIsLoading(true)
+
+        const getAddress = async () => {
+            if (user?.id ==null || user?.id ==undefined){
+                useIsLoading(false)
+                return
+            }
+
+            setIsLoadingAddress(true)
+            const response = await useUserAddress()
+            if (response) setAddressDetails(response)
+            setIsLoadingAddress(false)
+        }
+
+        getAddress()
+        setTimeout(() => stripeInit(),300)
+    },[user])
+
+    ///stopped here 4/15
+    const stripeInit = async ()  =>{
+        stripe.current = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PK_KEY||'')
+
+        const response = await fetch('/api/stripe',{
+            method: 'POST',
+            body:JSON.stringify({amount:cart.cartTotal()})
+        })
+        const result = await response.json()
+
+        clientSecret.current = result.client_secret
+        elements.current = stripe.current.elements();
+
+    }
+
     return (
         <MainLayout>
             <div id="CheckoutPage" className=" mt-4 max-w-[1100px] mx-auto">
