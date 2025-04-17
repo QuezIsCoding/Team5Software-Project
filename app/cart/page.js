@@ -36,10 +36,11 @@ export default function Cart() {
                 <div className="relative flex items-baseline justify-between gap-2" >
                     <ClientOnly>
                         <div className="w-[65%]">
-                            {cart.getCart().map(product=> (
-                                <CartItem key={product.id} product={product}/>
-                            ))}
-                            
+                        {cart.getCart()
+                            .filter(product => product && product.id)
+                            .map(product => (
+                                <CartItem key={product.id} product={product} />
+                            ))}   
                         </div>
                     </ClientOnly>
 

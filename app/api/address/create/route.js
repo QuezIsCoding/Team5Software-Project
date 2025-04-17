@@ -23,7 +23,7 @@ export async function POST(req){
                     address: body.address,
                     city: body.city,
                     state:body.state,
-                    zip: body.zipcode,
+                    zipcode: body.zipcode,
                     country: body.country,
                 }
             })

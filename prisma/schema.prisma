@@ -20,7 +20,7 @@ model Addresses {
   address      String
   city         String
   state        String
-  zip          String
+  zipcode          String
   country      String
   createdAt    DateTime? @default(now()) @db.Timestamptz(6)
 }

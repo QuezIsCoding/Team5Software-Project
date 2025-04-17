@@ -20,7 +20,7 @@ export async function POST(req){
                 data: {
                     name: body.name,
                     address: body.address,
-                    zip: body.zipcode,
+                    zipcode: body.zipcode,
                     city: body.city,
                     state: body.state,
                     country: body.country,

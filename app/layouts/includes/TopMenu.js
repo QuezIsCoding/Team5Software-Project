@@ -6,12 +6,15 @@ import { BsChevronDown } from "react-icons/bs";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useUser } from "@/app/context/user";
 import { useCart } from "../../context/cart";
+import { useRouter } from "next/navigation";
+import ClientOnly from "@/app/components/ClientOnly";
 
 const TopMenu = () => {
   const user = useUser();
   const cart = useCart();
   const [isMenu, setIsMenu] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     setIsClient(true);
@@ -95,18 +98,21 @@ const TopMenu = () => {
             <img width="32" src="/images/USA.png" alt="USA Flag" />
             Ship to
           </li>
-          <li className="px-3 hover-underline cursor-pointer">
-            <div className="relative">
-              <AiOutlineShoppingCart size={24} />
-              {isClient && cart.cartCount() > 0 && (
-                <div className="absolute text-[10px] -top-[2px] -right-[5px] bg-red-500 w-[14px] h-[14px] rounded-full text-white">
-                  <div className="flex items-center justify-center -mt-[1px]">
-                    {cart.cartCount()}
+          <ClientOnly>
+            <li className="px-3 hover:underline cursor-pointer">
+              <div onClick={() => router.push('/cart')} className="relative">
+                <AiOutlineShoppingCart size={24} />
+
+                {isClient && cart.cartCount() > 0 && (
+                  <div className="absolute text-[10px] -top-[2px] -right-[5px] bg-red-500 w-[14px] h-[14px] rounded-full text-white">
+                    <div className="flex items-center justify-center -mt-[1px]">
+                      {cart.cartCount()}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </li>
+                )}
+              </div>
+            </li>
+          </ClientOnly>
         </ul>
       </div>
     </nav>
