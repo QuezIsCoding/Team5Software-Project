@@ -14,7 +14,7 @@ const TopMenu = () => {
   const cart = useCart();
   const [isMenu, setIsMenu] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -36,10 +36,7 @@ const TopMenu = () => {
       <Link
         href="/auth"
         className="flex items-center gap-2 hover:underline cursor-pointer"
-        onClick={(event) => {
-          event.preventDefault(); 
-          setIsMenu(false);
-        }}
+        onClick={() => setIsMenu(false)}
       >
         <span>Login/Signup</span>
         <BsChevronDown />
@@ -100,7 +97,7 @@ const TopMenu = () => {
           </li>
           <ClientOnly>
             <li className="px-3 hover:underline cursor-pointer">
-              <div onClick={() => router.push('/cart')} className="relative">
+              <div onClick={() => router.push("/cart")} className="relative">
                 <AiOutlineShoppingCart size={24} />
 
                 {isClient && cart.cartCount() > 0 && (

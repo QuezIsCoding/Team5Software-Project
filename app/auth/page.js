@@ -22,7 +22,7 @@ export default function AuthPage() {
             <div className="max-w-[400px] mx-auto px-2">
                 <Auth
                     onlyThirdPartyProviders
-                    redirectTo={'${window.location.origin}/auth/callback'}
+                    redirectTo={`${window.location.origin}/auth/callback`}
                     supabaseClient={supabaseClient}
                     providers={['google']}
                     appearance={{theme: ThemeSupa}}
