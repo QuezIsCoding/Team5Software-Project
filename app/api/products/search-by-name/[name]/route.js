@@ -16,11 +16,11 @@ export async function GET(req, { params }) {
       },
     });
 
-    await prisma.$disconnect();
+    ;
     return NextResponse.json(items);
   } catch (error) {
     console.error(error);
-    await prisma.$disconnect();
+    ;
     return new NextResponse("Error Something went wrong", { status: 400 });
   }
 }

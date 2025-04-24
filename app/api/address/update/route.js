@@ -26,11 +26,11 @@ export async function POST(req){
                     country: body.country,
                 }
             })
-            await prisma.$disconnect();
+            ;
             return NextResponse.json(res);
     }catch (error){
         console.log(error);
-        await prisma.$disconnect();
+        ;
         return new NextResponse("Error Something went wrong", {status:400});
     }
     

@@ -10,12 +10,12 @@ export async function GET(req, { params }) {
       where: { id: Number(id) },
     });
 
-    await prisma.$disconnect();
+    ;
 
     return NextResponse.json(product);
   } catch (error) {
     console.error("Error fetching product:", error);
-    await prisma.$disconnect();
+    ;
     return NextResponse.json({ error: "Something went wrong" }, { status: 400 });
   }
 }

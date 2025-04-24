@@ -25,11 +25,11 @@ export async function GET() {
             }
         });
 
-        await prisma.$disconnect();
+        ;
         return NextResponse.json(orders);
     } catch (error) {
         console.error("Error fetching orders:", error);
-        await prisma.$disconnect();
+        ;
         return new NextResponse("Error: Something went wrong", { status: 400 });
     }
 }

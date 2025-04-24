@@ -37,11 +37,11 @@ export async function POST(req) {
             });
         }
 
-        await prisma.$disconnect();
+        ;
         return NextResponse.json("Order Complete", { status: 200 });
     } catch (error) {
         console.error("Error in order creation:", error);
-        await prisma.$disconnect();
+        ;
         return new NextResponse("Error: Something went wrong", { status: 400 });
     }
 }

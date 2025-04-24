@@ -12,11 +12,11 @@ export async function GET(){
             skip: skip,
             orderBy:{ id: 'asc'},
         })
-            await prisma.$disconnect();
+            ;
             return NextResponse.json(products);
     }catch (error){
         console.log(error);
-        await prisma.$disconnect();
+        ;
         return new NextResponse("Error Something went wrong", {status:400});
     }
     
